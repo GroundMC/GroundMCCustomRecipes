@@ -55,7 +55,7 @@ public class CustomRecipes extends JavaPlugin {
             new ShapelessRecipe(
                     new NamespacedKey(this, "wheatToBreadShapeless"),
                     new ItemStack(Material.BREAD, 1)).
-                    addIngredient(2, Material.WHEAT)
+                    addIngredient(3, Material.WHEAT)
     );
 
     @Override
