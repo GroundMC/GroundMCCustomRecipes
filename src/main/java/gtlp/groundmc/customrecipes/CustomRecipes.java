@@ -37,8 +37,17 @@ public class CustomRecipes extends JavaPlugin {
              */
             new ShapelessRecipe(
                     new NamespacedKey(this, "wheatToBreadShapeless"),
-                    new ItemStack(Material.BREAD, 1)).
+                    new ItemStack(Material.BREAD)).
                     addIngredient(3, Material.WHEAT),
+
+            /*
+             * Shapeless recipe to convert an enchanted book back to a normal book.
+             * Recycled paper is still good paper.
+             */
+            new ShapelessRecipe(
+                    new NamespacedKey(this, "enchantmentBookToBookShapeless"),
+                    new ItemStack(Material.BOOK)).
+                    addIngredient(Material.ENCHANTED_BOOK),
 
             /*
             Shaped recipes:
