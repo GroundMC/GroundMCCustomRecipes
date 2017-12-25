@@ -1,0 +1,4 @@
+name: GroundMC_CustomRecipes
+version: 1.0
+author: GiantTreeLP
+main: gtlp.groundmc.customrecipes.CustomRecipes
