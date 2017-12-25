@@ -96,7 +96,23 @@ public class CustomRecipes extends JavaPlugin {
                     new NamespacedKey(this, "log2ToChest"),
                     new ItemStack(Material.CHEST, 4)).
                     shape("LLL", "L L", "LLL").
-                    setIngredient('L', Material.LOG_2, WILDCARD)
+                    setIngredient('L', Material.LOG_2, WILDCARD),
+
+            /*
+             * A circle of rotten flesh to a single peace of leather.
+             * Another use of rotten flesh.
+             * Recipe:
+             * R R R
+             * R   R
+             * R R R
+             *
+             * Where "R" is rotten flesh.
+             */
+            new ShapedRecipe(
+                    new NamespacedKey(this, "rottenFleshToLeather"),
+                    new ItemStack(Material.LEATHER)).
+                    shape("RRR", "R R", "RRR").
+                    setIngredient('R', Material.ROTTEN_FLESH)
             /*
             Furnace Recipes:
              */
