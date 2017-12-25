@@ -2,3 +2,12 @@ name: GroundMC_CustomRecipes
 version: 1.0
 author: GiantTreeLP
 main: gtlp.groundmc.customrecipes.CustomRecipes
+
+permissions:
+  customrecipes.*:
+    description: Gives access to all functionality in this plugin.
+    default: op
+    children:
+      customrecipes.replant_crops: true
+  customrecipes.replant_crops:
+    description: Allows a user to replant crops by right-clicking with a hoe.

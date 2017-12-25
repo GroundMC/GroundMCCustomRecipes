@@ -1,6 +1,7 @@
 package gtlp.groundmc.customrecipes;
 
 import com.google.common.collect.Lists;
+import gtlp.groundmc.customrecipes.listeners.WorldInteractionListener;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -130,6 +131,7 @@ public class CustomRecipes extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        Bukkit.getPluginManager().registerEvents(new WorldInteractionListener(), this);
         recipes.forEach(Bukkit::addRecipe);
     }
 }
