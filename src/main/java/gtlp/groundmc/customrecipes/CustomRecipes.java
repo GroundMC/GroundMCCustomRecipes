@@ -15,6 +15,7 @@ import java.util.List;
 /**
  * Plugin to add some custom recipes
  */
+@SuppressWarnings("unused")
 public class CustomRecipes extends JavaPlugin {
 
     /**
