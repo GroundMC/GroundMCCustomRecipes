@@ -9,5 +9,8 @@ permissions:
     default: op
     children:
       customrecipes.replant_crops: true
+      customrecipes.disenchant: true
   customrecipes.replant_crops:
-    description: Allows a user to replant crops by right-clicking with a hoe.
+    description: Allows a player to replant crops by right-clicking with a hoe.
+  customrecipes.disenchant:
+    description: Allows a player to disenchant an enchanted Item and get an enchanted book with the enchantment on it.
