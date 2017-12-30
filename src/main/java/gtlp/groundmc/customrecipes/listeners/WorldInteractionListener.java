@@ -22,7 +22,8 @@ import java.util.List;
  */
 public class WorldInteractionListener implements Listener {
 
-    private final List<Material> replantHoes = Lists.newArrayList(Material.IRON_HOE, Material.DIAMOND_HOE);
+    private final List<Material> replantHoes =
+            Lists.newArrayList(Material.IRON_HOE, Material.DIAMOND_HOE);
 
     /**
      * Replants crops automatically when right-clicked with an iron or diamond
