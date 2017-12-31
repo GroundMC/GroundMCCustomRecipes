@@ -6,6 +6,9 @@ import gtlp.groundmc.customrecipes.listeners.WorldInteractionListener;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
@@ -132,8 +135,21 @@ public class CustomRecipes extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        getCommand("customrecipes").setExecutor(new CustomRecipesCommand());
+
         Bukkit.getPluginManager().registerEvents(new WorldInteractionListener(), this);
         Bukkit.getPluginManager().registerEvents(new DisenchantmentListener(), this);
         recipes.forEach(Bukkit::addRecipe);
+    }
+
+    private class CustomRecipesCommand implements CommandExecutor {
+
+        @Override
+        public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+            if (sender.hasPermission(Bukkit.getPluginManager().getPermission("customrecipes.admin"))) {
+                sender.sendMessage("Running CustomRecipes commit " + getDescription().getVersion());
+            }
+            return true;
+        }
     }
 }
