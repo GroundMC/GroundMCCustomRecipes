@@ -3,8 +3,18 @@ version: ${env.GIT_COMMIT}
 author: GiantTreeLP
 main: gtlp.groundmc.customrecipes.CustomRecipes
 
+commands:
+  customrecipes:
+    description: CustomRecipes
+    permission: customrecipes.admin
+    usage: /<command>
+
 permissions:
   customrecipes.*:
+    description: Gives access to all functionality in this plugin.
+    children:
+      customrecipes.admin: true
+  customrecipes.admin:
     description: Gives access to all functionality in this plugin.
     default: op
     children:
