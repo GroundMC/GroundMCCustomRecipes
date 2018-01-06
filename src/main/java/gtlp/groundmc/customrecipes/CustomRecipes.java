@@ -1,6 +1,5 @@
 package gtlp.groundmc.customrecipes;
 
-import com.google.common.collect.Lists;
 import gtlp.groundmc.customrecipes.listeners.DisenchantmentListener;
 import gtlp.groundmc.customrecipes.listeners.WorldInteractionListener;
 import org.bukkit.Bukkit;
@@ -32,7 +31,7 @@ public class CustomRecipes extends JavaPlugin {
      * A list of recipes to be added to the game.
      */
     @SuppressWarnings("deprecation")
-    private final List<Recipe> recipes = Lists.newArrayList(
+    private final List<Recipe> recipes = List.of(
             /*
             Shapeless recipes:
              */
