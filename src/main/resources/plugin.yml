@@ -1,4 +1,4 @@
-name: GroundMC_CustomRecipes
+name: GroundMCCustomRecipes
 version: ${env.GIT_COMMIT}
 author: GiantTreeLP
 main: gtlp.groundmc.customrecipes.CustomRecipes
