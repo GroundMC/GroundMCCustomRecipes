@@ -2,6 +2,7 @@ name: GroundMCCustomRecipes
 version: ${env.GIT_COMMIT}
 author: GiantTreeLP
 main: gtlp.groundmc.customrecipes.CustomRecipes
+depends: [GroundMCKotlinLoader]
 
 commands:
   customrecipes:
