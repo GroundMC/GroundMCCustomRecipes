@@ -28,11 +28,11 @@ class DisenchantmentListener : Listener {
         val firstItem = inventory.getItem(0)
         val book = inventory.getItem(1)
         if (firstItem != null &&
-                !firstItem.enchantments.isEmpty() &&
+                firstItem.enchantments.isNotEmpty() &&
                 book != null &&
                 book.type == Material.BOOK_AND_QUILL) {
 
-            val enchantment = firstItem.enchantments.entries.iterator().next()
+            val enchantment = firstItem.enchantments.entries.first()
 
             val enchantedBook = ItemStack(Material.ENCHANTED_BOOK)
             val meta = enchantedBook.itemMeta as EnchantmentStorageMeta
@@ -59,7 +59,6 @@ class DisenchantmentListener : Listener {
     fun disenchant(event: InventoryClickEvent) {
         val player = event.whoClicked as Player
         if (!player.hasPermission("customrecipes.disenchant")) {
-            event.isCancelled = true
             return
         }
         if (event.action == InventoryAction.NOTHING &&
@@ -69,10 +68,10 @@ class DisenchantmentListener : Listener {
             val firstItem = inventory.getItem(0)
             val book = inventory.getItem(1)
             if (firstItem != null &&
-                    !firstItem.enchantments.isEmpty() &&
+                    firstItem.enchantments.isNotEmpty() &&
                     book != null &&
                     book.type == Material.BOOK_AND_QUILL) {
-                val enchantment = firstItem.enchantments.entries.iterator().next()
+                val enchantment = firstItem.enchantments.entries.first()
 
                 if (player.level < enchantment.value * 2) {
                     event.isCancelled = true
