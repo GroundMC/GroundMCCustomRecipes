@@ -1,7 +1,7 @@
-package gtlp.groundmc.customrecipes
+package net.groundmc.customrecipes
 
-import gtlp.groundmc.customrecipes.listeners.DisenchantmentListener
-import gtlp.groundmc.customrecipes.listeners.WorldInteractionListener
+import net.groundmc.customrecipes.listeners.DisenchantmentListener
+import net.groundmc.customrecipes.listeners.WorldInteractionListener
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey

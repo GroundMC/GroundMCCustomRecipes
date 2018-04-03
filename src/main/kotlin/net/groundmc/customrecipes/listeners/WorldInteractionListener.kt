@@ -1,4 +1,4 @@
-package gtlp.groundmc.customrecipes.listeners
+package net.groundmc.customrecipes.listeners
 
 import org.bukkit.CropState
 import org.bukkit.Material
