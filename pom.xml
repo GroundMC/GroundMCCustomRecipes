@@ -38,6 +38,7 @@
     </dependencies>
 
     <build>
+        <finalName>GroundMCCustomRecipes</finalName>
         <sourceDirectory>src/main/kotlin/</sourceDirectory>
         <resources>
             <resource>
