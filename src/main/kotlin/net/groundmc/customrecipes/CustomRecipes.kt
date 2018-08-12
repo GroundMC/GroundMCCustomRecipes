@@ -146,6 +146,6 @@ class CustomRecipes : JavaPlugin() {
         /**
          * Constant wildcard value for recipes
          */
-        private const val WILDCARD = java.lang.Short.MAX_VALUE.toInt()
+        private const val WILDCARD = Short.MAX_VALUE.toInt()
     }
 }
