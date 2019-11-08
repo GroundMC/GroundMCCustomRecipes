@@ -1,8 +1,7 @@
 name: GroundMCCustomRecipes
-version: ${env.GIT_COMMIT}
-author: GiantTreeLP
+version: 1.2
+author: GiantTree
 main: net.groundmc.customrecipes.CustomRecipes
-depend: [GroundMCKotlinLoader]
 
 commands:
   customrecipes:
