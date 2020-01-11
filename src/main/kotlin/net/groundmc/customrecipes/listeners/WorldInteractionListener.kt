@@ -1,12 +1,11 @@
 package net.groundmc.customrecipes.listeners
 
-import org.bukkit.CropState
 import org.bukkit.Material
+import org.bukkit.block.data.Ageable
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.material.Crops
 
 /**
  * Listener that handles world interaction events and applies custom behaviour
@@ -14,7 +13,15 @@ import org.bukkit.material.Crops
  */
 class WorldInteractionListener : Listener {
 
-    private val replantHoes = listOf(Material.IRON_HOE, Material.DIAMOND_HOE)
+    private val crops = arrayOf(
+            Material.WHEAT,
+            Material.POTATOES,
+            Material.BEETROOTS,
+            Material.CARROTS,
+            Material.NETHER_WART,
+            Material.COCOA
+    )
+    private val replantHoes = arrayOf(Material.IRON_HOE, Material.DIAMOND_HOE)
 
     /**
      * Replants crops automatically when right-clicked with an iron or diamond
@@ -24,19 +31,19 @@ class WorldInteractionListener : Listener {
      */
     @EventHandler
     fun replantCrops(event: PlayerInteractEvent) {
-        val block = event.clickedBlock
+        val block = event.clickedBlock ?: return
         if (event.player.hasPermission("customrecipes.replant_crops") &&
                 event.action == Action.RIGHT_CLICK_BLOCK &&
                 replantHoes.contains(event.material) &&
-                block.state.data is Crops) {
+                block.type in crops &&
+                block.blockData is Ageable) {
 
-            val crop = block.state.data as Crops
+            val crop = block.blockData as Ageable
 
-            if (crop.state == CropState.RIPE) {
+            if (crop.age == crop.maximumAge) {
                 val drops = block.drops
-                crop.state = CropState.SEEDED
-
-                block.data = crop.data
+                crop.age = 0
+                block.blockData = crop
 
                 val location = block.location
                 drops.forEach { drop -> location.world.dropItemNaturally(location, drop) }

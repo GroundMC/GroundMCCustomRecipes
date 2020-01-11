@@ -30,7 +30,7 @@ class DisenchantmentListener : Listener {
         if (firstItem != null &&
                 firstItem.enchantments.isNotEmpty() &&
                 book != null &&
-                book.type == Material.BOOK_AND_QUILL) {
+                book.type == Material.WRITABLE_BOOK) {
 
             val enchantment = firstItem.enchantments.entries.first()
 
@@ -70,10 +70,11 @@ class DisenchantmentListener : Listener {
             if (firstItem != null &&
                     firstItem.enchantments.isNotEmpty() &&
                     book != null &&
-                    book.type == Material.BOOK_AND_QUILL) {
+                    book.type == Material.WRITABLE_BOOK) {
                 val enchantment = firstItem.enchantments.entries.first()
 
-                if (player.level < enchantment.value * 2) {
+                val levelCost = enchantment.value * 3
+                if (player.level < levelCost) {
                     event.isCancelled = true
                     return
                 }
@@ -83,8 +84,8 @@ class DisenchantmentListener : Listener {
                 firstItem.removeEnchantment(enchantment.key)
 
                 inventory.setItem(0, firstItem)
-                inventory.repairCost = enchantment.value * 2
-                player.level = player.level - enchantment.value * 2
+                inventory.repairCost = levelCost
+                player.level = player.level - levelCost
 
                 val enchantedBook = ItemStack(Material.ENCHANTED_BOOK)
                 val meta = enchantedBook.itemMeta as EnchantmentStorageMeta
@@ -96,8 +97,6 @@ class DisenchantmentListener : Listener {
                 enchantedBook.itemMeta = meta
 
                 event.currentItem = enchantedBook
-                event.view.cursor = enchantedBook
-                event.isCancelled = true
             }
         }
     }

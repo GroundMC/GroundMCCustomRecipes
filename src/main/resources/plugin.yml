@@ -1,7 +1,8 @@
-name: GroundMCCustomRecipes
-version: 1.2
+name: CustomRecipes
+version: "1.0"
 author: GiantTree
 main: net.groundmc.customrecipes.CustomRecipes
+api-version: "1.15"
 
 commands:
   customrecipes:

@@ -1,6 +1,7 @@
 package net.groundmc.customrecipes
 
 import net.groundmc.customrecipes.listeners.DisenchantmentListener
+import net.groundmc.customrecipes.listeners.UnlockCustomRecipes
 import net.groundmc.customrecipes.listeners.WorldInteractionListener
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -8,10 +9,7 @@ import org.bukkit.NamespacedKey
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
-import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.Recipe
-import org.bukkit.inventory.ShapedRecipe
-import org.bukkit.inventory.ShapelessRecipe
+import org.bukkit.inventory.*
 import org.bukkit.plugin.java.JavaPlugin
 
 /**
@@ -22,7 +20,7 @@ class CustomRecipes : JavaPlugin() {
     /**
      * A list of recipes to be added to the game.
      */
-    private val recipes = listOf<Recipe>(
+    private val recipes = mutableListOf<Recipe>(
             /*
             Shapeless recipes:
              */
@@ -59,20 +57,8 @@ class CustomRecipes : JavaPlugin() {
                     NamespacedKey(this, "logToStick"),
                     ItemStack(Material.STICK, 16))
                     .shape("L", "L")
-                    .setIngredient('L', Material.LOG, WILDCARD),
-            /*
-             * 2 Logs to 16 sticks, new logs.
-             * Recipe:
-             * L
-             * L
-             *
-             * Where "L" is a log.
-             */
-            ShapedRecipe(
-                    NamespacedKey(this, "log2ToStick"),
-                    ItemStack(Material.STICK, 16))
-                    .shape("L", "L")
-                    .setIngredient('L', Material.LOG_2, WILDCARD),
+                    .setIngredient('L', logChoice),
+
             /*
              * Logs in the shape of planks for a chest to 4 chests, old logs.
              * Recipe:
@@ -86,37 +72,8 @@ class CustomRecipes : JavaPlugin() {
                     NamespacedKey(this, "logToChest"),
                     ItemStack(Material.CHEST, 4))
                     .shape("LLL", "L L", "LLL")
-                    .setIngredient('L', Material.LOG, WILDCARD),
-            /*
-             * Logs in the shape of planks for a chest to 4 chests, new logs.
-             * Recipe:
-             * L L L
-             * L   L
-             * L L L
-             *
-             * Where "L" is a log.
-             */
-            ShapedRecipe(
-                    NamespacedKey(this, "log2ToChest"),
-                    ItemStack(Material.CHEST, 4))
-                    .shape("LLL", "L L", "LLL")
-                    .setIngredient('L', Material.LOG_2, WILDCARD),
+                    .setIngredient('L', logChoice)
 
-            /*
-             * A circle of rotten flesh to a single peace of leather.
-             * Another use of rotten flesh.
-             * Recipe:
-             * R R R
-             * R   R
-             * R R R
-             *
-             * Where "R" is rotten flesh.
-             */
-            ShapedRecipe(
-                    NamespacedKey(this, "rottenFleshToLeather"),
-                    ItemStack(Material.LEATHER))
-                    .shape("RRR", "R R", "RRR")
-                    .setIngredient('R', Material.ROTTEN_FLESH)
             /*
             Furnace Recipes:
              */
@@ -124,17 +81,36 @@ class CustomRecipes : JavaPlugin() {
     )
 
     override fun onEnable() {
-        getCommand("customrecipes").executor = CustomRecipesCommand()
+        getCommand("customrecipes")?.setExecutor(CustomRecipesCommand())
 
         Bukkit.getPluginManager().registerEvents(WorldInteractionListener(), this)
         Bukkit.getPluginManager().registerEvents(DisenchantmentListener(), this)
+        Bukkit.getPluginManager().registerEvents(UnlockCustomRecipes(this, slabsToPlanks), this)
+
+
+        addDynamicRecipes()
+
         recipes.forEach { Bukkit.addRecipe(it) }
+    }
+
+    private fun addDynamicRecipes() {
+        slabsToPlanks.forEach { (source, target) ->
+            recipes += ShapedRecipe(
+                    NamespacedKey(this, "slabsToPlanks${source.name}${target.name}"),
+                    ItemStack(target, 1)
+            )
+                    .shape("S", "S")
+                    .setIngredient('S', source)
+                    .apply {
+                        group = "slabsToGroups"
+                    }
+        }
     }
 
     private inner class CustomRecipesCommand : CommandExecutor {
 
         override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
-            if (sender.hasPermission(Bukkit.getPluginManager().getPermission("customrecipes.admin"))) {
+            if (sender.hasPermission(Bukkit.getPluginManager().getPermission("customrecipes.admin")!!)) {
                 sender.sendMessage("Running CustomRecipes commit " + description.version)
             }
             return true
@@ -142,10 +118,50 @@ class CustomRecipes : JavaPlugin() {
     }
 
     companion object {
+        private val logChoice = RecipeChoice.MaterialChoice(
+                Material.OAK_LOG,
+                Material.BIRCH_LOG,
+                Material.SPRUCE_LOG,
+                Material.JUNGLE_LOG,
+                Material.DARK_OAK_LOG,
+                Material.ACACIA_LOG
+        )
 
-        /**
-         * Constant wildcard value for recipes
-         */
-        private const val WILDCARD = Short.MAX_VALUE.toInt()
+        private val slabsToPlanks = mapOf(
+                Material.OAK_SLAB to Material.OAK_PLANKS,
+                Material.BIRCH_SLAB to Material.BIRCH_PLANKS,
+                Material.SPRUCE_SLAB to Material.SPRUCE_PLANKS,
+                Material.DARK_OAK_SLAB to Material.DARK_OAK_PLANKS,
+                Material.JUNGLE_SLAB to Material.JUNGLE_PLANKS,
+                Material.ACACIA_SLAB to Material.ACACIA_PLANKS,
+                Material.STONE_SLAB to Material.STONE,
+                Material.COBBLESTONE_SLAB to Material.COBBLESTONE,
+                Material.SMOOTH_STONE_SLAB to Material.SMOOTH_STONE,
+                Material.SANDSTONE_SLAB to Material.SANDSTONE,
+                Material.CUT_SANDSTONE_SLAB to Material.CUT_SANDSTONE,
+                Material.BRICK_SLAB to Material.BRICKS,
+                Material.STONE_BRICK_SLAB to Material.STONE_BRICKS,
+                Material.NETHER_BRICK_SLAB to Material.NETHER_BRICKS,
+                Material.QUARTZ_SLAB to Material.QUARTZ_BLOCK,
+                Material.RED_SANDSTONE_SLAB to Material.RED_SANDSTONE,
+                Material.CUT_RED_SANDSTONE_SLAB to Material.CUT_RED_SANDSTONE,
+                Material.PURPUR_SLAB to Material.PURPUR_BLOCK,
+                Material.PRISMARINE_SLAB to Material.PRISMARINE,
+                Material.PRISMARINE_BRICK_SLAB to Material.PRISMARINE_BRICKS,
+                Material.DARK_PRISMARINE_SLAB to Material.DARK_PRISMARINE,
+                Material.POLISHED_GRANITE_SLAB to Material.POLISHED_GRANITE,
+                Material.POLISHED_ANDESITE_SLAB to Material.POLISHED_ANDESITE,
+                Material.POLISHED_DIORITE_SLAB to Material.POLISHED_DIORITE,
+                Material.GRANITE_SLAB to Material.GRANITE,
+                Material.DIORITE_SLAB to Material.DIORITE,
+                Material.ANDESITE_SLAB to Material.ANDESITE,
+                Material.SMOOTH_SANDSTONE_SLAB to Material.SMOOTH_SANDSTONE,
+                Material.SMOOTH_RED_SANDSTONE_SLAB to Material.SMOOTH_RED_SANDSTONE,
+                Material.MOSSY_STONE_BRICK_SLAB to Material.MOSSY_STONE_BRICKS,
+                Material.MOSSY_COBBLESTONE_SLAB to Material.MOSSY_COBBLESTONE,
+                Material.END_STONE_BRICK_SLAB to Material.END_STONE_BRICKS,
+                Material.SMOOTH_QUARTZ_SLAB to Material.SMOOTH_QUARTZ,
+                Material.RED_NETHER_BRICK_SLAB to Material.RED_NETHER_BRICKS
+        )
     }
 }
