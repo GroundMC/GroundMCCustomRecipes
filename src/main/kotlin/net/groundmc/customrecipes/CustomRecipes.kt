@@ -96,13 +96,13 @@ class CustomRecipes : JavaPlugin() {
     private fun addDynamicRecipes() {
         slabsToPlanks.forEach { (source, target) ->
             recipes += ShapedRecipe(
-                    NamespacedKey(this, "slabsToPlanks${source.name}${target.name}"),
+                    NamespacedKey(this, "slabsToBlocks${source.name}${target.name}"),
                     ItemStack(target, 1)
             )
                     .shape("S", "S")
                     .setIngredient('S', source)
                     .apply {
-                        group = "slabsToGroups"
+                        group = "slabsToBlocks"
                     }
         }
     }

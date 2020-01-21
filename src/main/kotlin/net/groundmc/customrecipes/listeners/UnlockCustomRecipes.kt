@@ -12,7 +12,7 @@ class UnlockCustomRecipes(private val plugin: CustomRecipes,
     @EventHandler
     fun unlockAllRecipesOnJoin(event: PlayerJoinEvent) {
         event.player.discoverRecipes(recipes.map { (source, target) ->
-            NamespacedKey(plugin, "slabsToPlanks${source.name}${target.name}")
+            NamespacedKey(plugin, "slabsToBlocks${source.name}${target.name}")
         })
     }
 }
