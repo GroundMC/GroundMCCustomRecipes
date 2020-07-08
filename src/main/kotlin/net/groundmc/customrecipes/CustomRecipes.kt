@@ -99,7 +99,7 @@ class CustomRecipes : JavaPlugin() {
                     NamespacedKey(this, "slabsToBlocks${source.name}${target.name}"),
                     ItemStack(target, 1)
             )
-                    .shape("S", "S")
+                    .shape("SS")
                     .setIngredient('S', source)
                     .apply {
                         group = "slabsToBlocks"
@@ -124,7 +124,11 @@ class CustomRecipes : JavaPlugin() {
                 Material.SPRUCE_LOG,
                 Material.JUNGLE_LOG,
                 Material.DARK_OAK_LOG,
-                Material.ACACIA_LOG
+                Material.ACACIA_LOG,
+
+                // 1.16
+                Material.CRIMSON_STEM,
+                Material.WARPED_STEM
         )
 
         private val slabsToPlanks = mapOf(
@@ -161,7 +165,14 @@ class CustomRecipes : JavaPlugin() {
                 Material.MOSSY_COBBLESTONE_SLAB to Material.MOSSY_COBBLESTONE,
                 Material.END_STONE_BRICK_SLAB to Material.END_STONE_BRICKS,
                 Material.SMOOTH_QUARTZ_SLAB to Material.SMOOTH_QUARTZ,
-                Material.RED_NETHER_BRICK_SLAB to Material.RED_NETHER_BRICKS
+                Material.RED_NETHER_BRICK_SLAB to Material.RED_NETHER_BRICKS,
+
+                //1.16
+                Material.CRIMSON_SLAB to Material.CRIMSON_PLANKS,
+                Material.WARPED_SLAB to Material.WARPED_PLANKS,
+                Material.BLACKSTONE_SLAB to Material.BLACKSTONE,
+                Material.POLISHED_BLACKSTONE_SLAB to Material.POLISHED_BLACKSTONE,
+                Material.POLISHED_BLACKSTONE_BRICK_SLAB to Material.POLISHED_BLACKSTONE_BRICKS
         )
     }
 }
