@@ -14,12 +14,12 @@ import org.bukkit.event.player.PlayerInteractEvent
 class WorldInteractionListener : Listener {
 
     private val crops = arrayOf(
-            Material.WHEAT,
-            Material.POTATOES,
-            Material.BEETROOTS,
-            Material.CARROTS,
-            Material.NETHER_WART,
-            Material.COCOA
+        Material.WHEAT,
+        Material.POTATOES,
+        Material.BEETROOTS,
+        Material.CARROTS,
+        Material.NETHER_WART,
+        Material.COCOA
     )
     private val replantHoes = arrayOf(Material.IRON_HOE, Material.DIAMOND_HOE)
 
@@ -33,10 +33,11 @@ class WorldInteractionListener : Listener {
     fun replantCrops(event: PlayerInteractEvent) {
         val block = event.clickedBlock ?: return
         if (event.player.hasPermission("customrecipes.replant_crops") &&
-                event.action == Action.RIGHT_CLICK_BLOCK &&
-                replantHoes.contains(event.material) &&
-                block.type in crops &&
-                block.blockData is Ageable) {
+            event.action == Action.RIGHT_CLICK_BLOCK &&
+            replantHoes.contains(event.material) &&
+            block.type in crops &&
+            block.blockData is Ageable
+        ) {
 
             val crop = block.blockData as Ageable
 
@@ -48,6 +49,7 @@ class WorldInteractionListener : Listener {
                 val location = block.location
                 drops.forEach { drop -> location.world.dropItemNaturally(location, drop) }
             }
+            event.isCancelled = true
         }
     }
 }
