@@ -34,18 +34,19 @@ class DisenchantmentListener(private val plugin: Plugin) : Listener {
         val firstItem = inventory.getItem(0)
         val book = inventory.getItem(1)
         if (firstItem != null &&
-                firstItem.enchantments.isNotEmpty() &&
-                book != null &&
-                book.type == Material.WRITABLE_BOOK) {
+            firstItem.enchantments.isNotEmpty() &&
+            book != null &&
+            book.type == Material.WRITABLE_BOOK
+        ) {
 
             val enchantment = firstItem.enchantments.entries.first()
 
             val enchantedBook = ItemStack(Material.ENCHANTED_BOOK)
             val meta = enchantedBook.itemMeta as EnchantmentStorageMeta
             meta.addStoredEnchant(
-                    enchantment.key,
-                    enchantment.value,
-                    false
+                enchantment.key,
+                enchantment.value,
+                false
             )
             enchantedBook.itemMeta = meta
             event.result = enchantedBook
@@ -61,14 +62,16 @@ class DisenchantmentListener(private val plugin: Plugin) : Listener {
         val inventory = event.clickedInventory
         val whoClicked = event.whoClicked
         if (event.isLeftClick &&
-                whoClicked is Player &&
-                inventory is AnvilInventory) {
+            whoClicked is Player &&
+            inventory is AnvilInventory
+        ) {
             val firstItem = inventory.getItem(0)
             val book = inventory.getItem(1)
             if (firstItem != null &&
-                    firstItem.enchantments.isNotEmpty() &&
-                    book != null &&
-                    book.type == Material.WRITABLE_BOOK) {
+                firstItem.enchantments.isNotEmpty() &&
+                book != null &&
+                book.type == Material.WRITABLE_BOOK
+            ) {
 
                 event.result = Event.Result.DENY
 
@@ -77,9 +80,9 @@ class DisenchantmentListener(private val plugin: Plugin) : Listener {
                 val enchantedBook = ItemStack(Material.ENCHANTED_BOOK)
                 val meta = enchantedBook.itemMeta as EnchantmentStorageMeta
                 meta.addStoredEnchant(
-                        enchantment.key,
-                        enchantment.value,
-                        false
+                    enchantment.key,
+                    enchantment.value,
+                    false
                 )
                 enchantedBook.itemMeta = meta
                 if (event.isShiftClick) {
@@ -98,19 +101,20 @@ class DisenchantmentListener(private val plugin: Plugin) : Listener {
                     val index = anvilTypes.indexOf(anvil.type)
                     val world = anvilLocation.world
                     world.spawnParticle(
-                            Particle.BLOCK_CRACK,
-                            anvilLocation,
-                            100,
-                            0.25,
-                            0.0,
-                            0.25,
-                            anvil.blockData
+                        Particle.BLOCK_CRACK,
+                        anvilLocation,
+                        100,
+                        0.25,
+                        0.0,
+                        0.25,
+                        anvil.blockData
                     )
                     world.playSound(
-                            anvilLocation,
-                            Sound.BLOCK_ANVIL_DESTROY,
-                            0.75f,
-                            1.0f)
+                        anvilLocation,
+                        Sound.BLOCK_ANVIL_DESTROY,
+                        0.75f,
+                        1.0f
+                    )
                     if (index in 0 until anvilTypes.lastIndex) {
                         val directional = anvil.blockData as Directional
                         anvil.type = anvilTypes[index + 1]
@@ -139,8 +143,9 @@ class DisenchantmentListener(private val plugin: Plugin) : Listener {
     companion object {
         private const val valueMultiplier = 4
         private val anvilTypes = arrayOf(
-                Material.ANVIL,
-                Material.CHIPPED_ANVIL,
-                Material.DAMAGED_ANVIL)
+            Material.ANVIL,
+            Material.CHIPPED_ANVIL,
+            Material.DAMAGED_ANVIL
+        )
     }
 }
