@@ -1,12 +1,17 @@
 package net.groundmc.customrecipes.listeners
 
-import org.bukkit.*
+import org.bukkit.Location
+import org.bukkit.Material
+import org.bukkit.Particle
+import org.bukkit.Sound
 import org.bukkit.block.data.Directional
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryType
 import org.bukkit.event.inventory.PrepareAnvilEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.AnvilInventory
@@ -36,7 +41,8 @@ class DisenchantmentListener(private val plugin: Plugin) : Listener {
         if (firstItem != null &&
             firstItem.enchantments.isNotEmpty() &&
             book != null &&
-            book.type == Material.WRITABLE_BOOK
+            book.type == Material.WRITABLE_BOOK &&
+            event.inventory.renameText?.isEmpty() == true
         ) {
 
             val enchantment = firstItem.enchantments.entries.first()
@@ -51,9 +57,7 @@ class DisenchantmentListener(private val plugin: Plugin) : Listener {
             enchantedBook.itemMeta = meta
             event.result = enchantedBook
 
-            Bukkit.getScheduler().runTask(plugin, Runnable {
-                inventory.repairCost = enchantment.value * valueMultiplier
-            })
+            inventory.repairCost = disenchantmentCost(enchantment)
         }
     }
 
@@ -61,22 +65,33 @@ class DisenchantmentListener(private val plugin: Plugin) : Listener {
     fun extractEnchantment(event: InventoryClickEvent) {
         val inventory = event.clickedInventory
         val whoClicked = event.whoClicked
+
+        // Check whether left-clicking the result of the result prepared above
         if (event.isLeftClick &&
             whoClicked is Player &&
-            inventory is AnvilInventory
+            inventory is AnvilInventory &&
+            event.slotType == InventoryType.SlotType.RESULT
         ) {
+            // Checking if there are all the required items and there is still an applicable enchantment
             val firstItem = inventory.getItem(0)
             val book = inventory.getItem(1)
             if (firstItem != null &&
                 firstItem.enchantments.isNotEmpty() &&
                 book != null &&
-                book.type == Material.WRITABLE_BOOK
+                book.type == Material.WRITABLE_BOOK &&
+                inventory.renameText?.isEmpty() == true
             ) {
 
-                event.result = Event.Result.DENY
 
                 val enchantment = firstItem.enchantments.entries.first()
-                whoClicked.giveExpLevels(-enchantment.value * valueMultiplier)
+                // Check if the player has enough levels to actually commence disenchanting
+                if (whoClicked.level < disenchantmentCost(enchantment)) {
+                    return
+                }
+
+                whoClicked.giveExpLevels(-disenchantmentCost(enchantment))
+
+                // Build the enchanted book
                 val enchantedBook = ItemStack(Material.ENCHANTED_BOOK)
                 val meta = enchantedBook.itemMeta as EnchantmentStorageMeta
                 meta.addStoredEnchant(
@@ -85,8 +100,15 @@ class DisenchantmentListener(private val plugin: Plugin) : Listener {
                     false
                 )
                 enchantedBook.itemMeta = meta
+
+                // Actually cancel the original event,
+                event.result = Event.Result.DENY
+
                 if (event.isShiftClick) {
-                    whoClicked.inventory.addItem(enchantedBook)
+                    val result = whoClicked.inventory.addItem(enchantedBook)
+                    if (result.isNotEmpty()) {
+                        event.view.cursor = enchantedBook
+                    }
                 } else {
                     event.view.cursor = enchantedBook
                 }
@@ -130,6 +152,9 @@ class DisenchantmentListener(private val plugin: Plugin) : Listener {
             }
         }
     }
+
+    private fun disenchantmentCost(enchantment: MutableMap.MutableEntry<Enchantment, Int>) =
+        enchantment.value * valueMultiplier
 
     @EventHandler
     fun useAnvil(event: PlayerInteractEvent) {
