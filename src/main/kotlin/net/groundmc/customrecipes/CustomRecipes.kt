@@ -87,7 +87,7 @@ class CustomRecipes : JavaPlugin() {
     override fun onEnable() {
         getCommand("customrecipes")?.setExecutor(CustomRecipesCommand())
 
-        Bukkit.getPluginManager().registerEvents(WorldInteractionListener(), this)
+        Bukkit.getPluginManager().registerEvents(WorldInteractionListener(this), this)
         Bukkit.getPluginManager().registerEvents(DisenchantmentListener(this), this)
         Bukkit.getPluginManager().registerEvents(UnlockCustomRecipes(this, slabsToPlanks), this)
 
