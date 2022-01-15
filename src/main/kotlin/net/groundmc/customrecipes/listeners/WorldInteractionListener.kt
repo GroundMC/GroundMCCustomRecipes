@@ -31,6 +31,25 @@ class WorldInteractionListener(plugin: Plugin) : Listener {
         )
         .ensureSize("SEEDS", 6)
 
+    private val goodHoes = MaterialSetTag(NamespacedKey(plugin, "good_hoes"))
+        .add(
+            Material.IRON_HOE,
+            Material.DIAMOND_HOE,
+            Material.NETHERITE_HOE
+        )
+        .ensureSize("GOOD_HOES", 3)
+
+    private val replantableCrops = MaterialSetTag(NamespacedKey(plugin, "replantable_crops"))
+        .add(
+            Material.WHEAT,
+            Material.POTATOES,
+            Material.BEETROOTS,
+            Material.CARROTS,
+            Material.NETHER_WART,
+            Material.COCOA
+        )
+        .ensureSize("REPLANTABLE_CROPS", 6)
+
 
     /**
      * Replants crops automatically when right-clicked with an iron or diamond
@@ -43,8 +62,8 @@ class WorldInteractionListener(plugin: Plugin) : Listener {
         val block = event.clickedBlock ?: return
         if (event.player.hasPermission("customrecipes.replant_crops") &&
             event.action == Action.RIGHT_CLICK_BLOCK &&
-            REPLANT_HOES.contains(event.material) &&
-            block.type in CROPS &&
+            goodHoes.isTagged(event.material) &&
+            replantableCrops.isTagged(block) &&
             block.blockData is Ageable
         ) {
 
@@ -84,17 +103,5 @@ class WorldInteractionListener(plugin: Plugin) : Listener {
             }
             event.isCancelled = true
         }
-    }
-
-    companion object {
-        private val REPLANT_HOES = arrayOf(Material.IRON_HOE, Material.DIAMOND_HOE, Material.NETHERITE_HOE)
-        private val CROPS = arrayOf(
-            Material.WHEAT,
-            Material.POTATOES,
-            Material.BEETROOTS,
-            Material.CARROTS,
-            Material.NETHER_WART,
-            Material.COCOA
-        )
     }
 }
