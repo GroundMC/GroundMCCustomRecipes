@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.Plugin
 
@@ -65,6 +66,12 @@ class WorldInteractionListener(plugin: Plugin) : Listener {
 
                 crop.age = 0
                 block.blockData = crop
+
+                when (event.hand) {
+                    EquipmentSlot.HAND -> event.player.swingMainHand()
+                    EquipmentSlot.OFF_HAND -> event.player.swingOffHand()
+                    else -> Unit
+                }
 
                 drops.forEach { drop ->
                     if (seeds.isTagged(drop.type)) {
