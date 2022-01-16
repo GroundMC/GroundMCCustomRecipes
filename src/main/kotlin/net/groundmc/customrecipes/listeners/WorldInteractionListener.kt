@@ -5,13 +5,14 @@ import com.destroystokyo.paper.ParticleBuilder
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.Particle
+import org.bukkit.block.BlockFace
 import org.bukkit.block.data.Ageable
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
-import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.Plugin
 
 /**
@@ -60,48 +61,109 @@ class WorldInteractionListener(plugin: Plugin) : Listener {
     @EventHandler
     fun replantCrops(event: PlayerInteractEvent) {
         val block = event.clickedBlock ?: return
+        val item = event.item ?: return
         if (event.player.hasPermission("customrecipes.replant_crops") &&
             event.action == Action.RIGHT_CLICK_BLOCK &&
-            goodHoes.isTagged(event.material) &&
-            replantableCrops.isTagged(block) &&
-            block.blockData is Ageable
+            goodHoes.isTagged(item)
         ) {
+            val efficiency = item.getEnchantmentLevel(Enchantment.DIG_SPEED)
 
-            val crop = block.blockData as Ageable
+            val rotation = event.player.facing
+            val shape = when (efficiency) {
+                0 -> Shapes.ONE_BY_ONE
+                1 -> Shapes.ONE_BY_TWO
+                2 -> Shapes.TWO_BY_TWO
+                3 -> Shapes.TWO_BY_THREE
+                4 -> Shapes.THREE_BY_THREE
+                5 -> Shapes.THREE_BY_FOUR
+                else -> Shapes.ONE_BY_ONE
+            }.map { it.rotate(rotation) }
 
-            if (crop.age == crop.maximumAge) {
-                val drops: Collection<ItemStack> = event.item?.let { block.getDrops(it, event.player) } ?: block.drops
+            for ((x, y) in shape) {
+                val blockAt = block.getRelative(x, 0, y)
 
-                val location = block.location
-                ParticleBuilder(Particle.BLOCK_CRACK)
-                    .location(location.toCenterLocation())
-                    .offset(0.1, 0.1, 0.1)
-                    .count(48)
-                    .allPlayers()
-                    .data(block.blockData)
-                    .spawn()
+                if (replantableCrops.isTagged(blockAt) &&
+                    blockAt.blockData is Ageable
+                ) {
 
-                location.world.playSound(location, block.blockData.soundGroup.breakSound, 1f, 1f)
+                    val crop = blockAt.blockData as Ageable
 
-                crop.age = 0
-                block.blockData = crop
+                    if (crop.age == crop.maximumAge) {
+                        val drops = event.item?.let { blockAt.getDrops(it, event.player) } ?: blockAt.drops
 
-                when (event.hand) {
-                    EquipmentSlot.HAND -> event.player.swingMainHand()
-                    EquipmentSlot.OFF_HAND -> event.player.swingOffHand()
-                    else -> Unit
-                }
+                        val location = blockAt.location
+                        ParticleBuilder(Particle.BLOCK_CRACK)
+                            .location(location.toCenterLocation())
+                            .offset(0.1, 0.1, 0.1)
+                            .count(48)
+                            .allPlayers()
+                            .data(blockAt.blockData)
+                            .spawn()
 
-                drops.forEach { drop ->
-                    if (seeds.isTagged(drop.type)) {
-                        drop.amount--
+                        location.world.playSound(location, blockAt.blockData.soundGroup.breakSound, 1f, 1f)
+
+                        crop.age = 0
+                        blockAt.blockData = crop
+
+                        when (event.hand) {
+                            EquipmentSlot.HAND -> event.player.swingMainHand()
+                            EquipmentSlot.OFF_HAND -> event.player.swingOffHand()
+                            else -> Unit
+                        }
+
+                        drops.forEach { drop ->
+                            if (seeds.isTagged(drop.type)) {
+                                drop.amount--
+                            }
+                            if (drop.amount > 0) {
+                                location.world.dropItemNaturally(location, drop)
+                            }
+                        }
                     }
-                    if (drop.amount > 0) {
-                        location.world.dropItemNaturally(location, drop)
-                    }
+                    event.isCancelled = true
                 }
             }
-            event.isCancelled = true
+        }
+    }
+
+    companion object {
+        data class Offset(val x: Int, val y: Int) {
+            fun rotate(facing: BlockFace): Offset {
+                return when (facing) {
+                    BlockFace.NORTH -> Offset(-x, -y)
+                    BlockFace.EAST -> Offset(y, -x)
+                    BlockFace.SOUTH -> this
+                    BlockFace.WEST -> Offset(-y, x)
+                    else -> this
+                }
+            }
+        }
+
+        object Shapes {
+            internal val ONE_BY_ONE = setOf(Offset(0, 0))
+            internal val ONE_BY_TWO = setOf(
+                Offset(0, 0),
+                Offset(0, 1)
+            )
+            internal val TWO_BY_TWO = setOf(
+                Offset(-1, 0), Offset(0, 0),
+                Offset(-1, 1), Offset(0, 1)
+            )
+            internal val TWO_BY_THREE = setOf(
+                Offset(-1, 0), Offset(0, 0), Offset(1, 0),
+                Offset(-1, 1), Offset(0, 1), Offset(1, 1),
+            )
+            internal val THREE_BY_THREE = setOf(
+                Offset(-1, -1), Offset(0, -1), Offset(1, -1),
+                Offset(-1, 0), Offset(0, 0), Offset(1, 0),
+                Offset(-1, 1), Offset(0, 1), Offset(1, 1),
+            )
+            internal val THREE_BY_FOUR = setOf(
+                Offset(-1, -1), Offset(0, -1), Offset(1, -1),
+                Offset(-1, 0), Offset(0, 0), Offset(1, 0),
+                Offset(-1, 1), Offset(0, 1), Offset(1, 1),
+                Offset(-1, 2), Offset(0, 2), Offset(1, 2),
+            )
         }
     }
 }
