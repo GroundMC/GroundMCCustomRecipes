@@ -132,7 +132,10 @@ class CustomRecipes : JavaPlugin() {
 
             // 1.16
             Material.CRIMSON_STEM,
-            Material.WARPED_STEM
+            Material.WARPED_STEM,
+
+            // 1.19
+            Material.MANGROVE_LOG,
         )
 
         private val slabsToPlanks = mapOf(
@@ -192,6 +195,9 @@ class CustomRecipes : JavaPlugin() {
             Material.WAXED_EXPOSED_CUT_COPPER_SLAB to Material.WAXED_EXPOSED_CUT_COPPER,
             Material.WAXED_OXIDIZED_CUT_COPPER_SLAB to Material.WAXED_OXIDIZED_CUT_COPPER,
             Material.WAXED_WEATHERED_CUT_COPPER_SLAB to Material.WAXED_WEATHERED_CUT_COPPER,
+
+            //1.19
+            Material.MANGROVE_SLAB to Material.MANGROVE_PLANKS,
         )
     }
 }
