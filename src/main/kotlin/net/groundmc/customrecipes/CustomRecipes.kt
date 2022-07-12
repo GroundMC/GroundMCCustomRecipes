@@ -109,6 +109,17 @@ class CustomRecipes : JavaPlugin() {
                     group = "slabsToBlocks"
                 }
         }
+
+        recipes += StonecuttingRecipe(
+            NamespacedKey(this, "grindSandstoneToSand"),
+            ItemStack(Material.SAND, 4),
+            Material.SANDSTONE
+        )
+        recipes += StonecuttingRecipe(
+            NamespacedKey(this, "grindRedSandstoneToSand"),
+            ItemStack(Material.RED_SAND, 4),
+            Material.RED_SANDSTONE
+        )
     }
 
     private inner class CustomRecipesCommand : CommandExecutor {
