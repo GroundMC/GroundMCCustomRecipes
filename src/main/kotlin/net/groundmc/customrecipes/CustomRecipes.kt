@@ -147,6 +147,9 @@ class CustomRecipes : JavaPlugin() {
 
             // 1.19
             Material.MANGROVE_LOG,
+
+            // 1.20
+            Material.CHERRY_LOG,
         )
 
         private val slabsToPlanks = mapOf(
@@ -209,6 +212,14 @@ class CustomRecipes : JavaPlugin() {
 
             //1.19
             Material.MANGROVE_SLAB to Material.MANGROVE_PLANKS,
+
+            //1.20
+            Material.BAMBOO_SLAB to Material.BAMBOO,
+            Material.BAMBOO_MOSAIC_SLAB to Material.BAMBOO_MOSAIC,
+            Material.CHERRY_SLAB to Material.CHERRY_PLANKS,
+
+            //1.21
+            
         )
     }
 }

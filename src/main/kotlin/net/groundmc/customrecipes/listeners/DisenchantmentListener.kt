@@ -1,5 +1,6 @@
 package net.groundmc.customrecipes.listeners
 
+import com.destroystokyo.paper.ParticleBuilder
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Particle
@@ -107,10 +108,10 @@ class DisenchantmentListener(private val plugin: Plugin) : Listener {
                 if (event.isShiftClick) {
                     val result = whoClicked.inventory.addItem(enchantedBook)
                     if (result.isNotEmpty()) {
-                        event.view.cursor = enchantedBook
+                        event.view.setCursor(enchantedBook)
                     }
                 } else {
-                    event.view.cursor = enchantedBook
+                    event.view.setCursor(enchantedBook)
                 }
                 firstItem.removeEnchantment(enchantment.key)
 
@@ -122,15 +123,13 @@ class DisenchantmentListener(private val plugin: Plugin) : Listener {
                     val anvil = anvilLocation.block.state
                     val index = anvilTypes.indexOf(anvil.type)
                     val world = anvilLocation.world
-                    world.spawnParticle(
-                        Particle.BLOCK_CRACK,
-                        anvilLocation,
-                        100,
-                        0.25,
-                        0.0,
-                        0.25,
-                        anvil.blockData
-                    )
+                    ParticleBuilder(Particle.BLOCK)
+                        .location(anvilLocation.toCenterLocation())
+                        .offset(0.25, 0.0, 0.25)
+                        .count(100)
+                        .receivers(24)
+                        .data(anvil.blockData)
+                        .spawn()
                     world.playSound(
                         anvilLocation,
                         Sound.BLOCK_ANVIL_DESTROY,
@@ -154,7 +153,7 @@ class DisenchantmentListener(private val plugin: Plugin) : Listener {
     }
 
     private fun disenchantmentCost(enchantment: MutableMap.MutableEntry<Enchantment, Int>) =
-        enchantment.value * valueMultiplier
+        enchantment.value * VALUE_MULTIPLIER
 
     @EventHandler
     fun useAnvil(event: PlayerInteractEvent) {
@@ -166,7 +165,7 @@ class DisenchantmentListener(private val plugin: Plugin) : Listener {
     }
 
     companion object {
-        private const val valueMultiplier = 4
+        private const val VALUE_MULTIPLIER = 4
         private val anvilTypes = arrayOf(
             Material.ANVIL,
             Material.CHIPPED_ANVIL,

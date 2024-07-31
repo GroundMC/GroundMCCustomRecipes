@@ -66,7 +66,7 @@ class WorldInteractionListener(plugin: Plugin) : Listener {
             event.action == Action.RIGHT_CLICK_BLOCK &&
             goodHoes.isTagged(item)
         ) {
-            val efficiency = item.getEnchantmentLevel(Enchantment.DIG_SPEED)
+            val efficiency = item.getEnchantmentLevel(Enchantment.EFFICIENCY)
 
             val rotation = event.player.facing
             val shape = when (efficiency) {
@@ -92,11 +92,11 @@ class WorldInteractionListener(plugin: Plugin) : Listener {
                         val drops = event.item?.let { blockAt.getDrops(it, event.player) } ?: blockAt.drops
 
                         val location = blockAt.location
-                        ParticleBuilder(Particle.BLOCK_CRACK)
+                        ParticleBuilder(Particle.BLOCK)
                             .location(location.toCenterLocation())
                             .offset(0.1, 0.1, 0.1)
                             .count(48)
-                            .allPlayers()
+                            .receivers(24)
                             .data(blockAt.blockData)
                             .spawn()
 
