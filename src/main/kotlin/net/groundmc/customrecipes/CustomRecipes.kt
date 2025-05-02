@@ -150,6 +150,9 @@ class CustomRecipes : JavaPlugin() {
 
             // 1.20
             Material.CHERRY_LOG,
+
+            // 1.21
+            Material.PALE_OAK_LOG,
         )
 
         private val slabsToPlanks = mapOf(
@@ -219,7 +222,8 @@ class CustomRecipes : JavaPlugin() {
             Material.CHERRY_SLAB to Material.CHERRY_PLANKS,
 
             //1.21
-            
+            //1.21.4
+            Material.PALE_OAK_SLAB to Material.PALE_OAK_PLANKS,
         )
     }
 }

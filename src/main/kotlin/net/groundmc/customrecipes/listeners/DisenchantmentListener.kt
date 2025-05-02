@@ -18,6 +18,7 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.AnvilInventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.EnchantmentStorageMeta
+import org.bukkit.inventory.view.AnvilView
 import org.bukkit.plugin.Plugin
 import java.util.*
 
@@ -37,13 +38,14 @@ class DisenchantmentListener(private val plugin: Plugin) : Listener {
     @EventHandler
     fun prepareDisenchant(event: PrepareAnvilEvent) {
         val inventory = event.inventory
+        val view = event.view
         val firstItem = inventory.getItem(0)
         val book = inventory.getItem(1)
         if (firstItem != null &&
             firstItem.enchantments.isNotEmpty() &&
             book != null &&
             book.type == Material.WRITABLE_BOOK &&
-            event.inventory.renameText?.isEmpty() == true
+            view.renameText?.isEmpty() == true
         ) {
 
             val enchantment = firstItem.enchantments.entries.first()
@@ -58,19 +60,21 @@ class DisenchantmentListener(private val plugin: Plugin) : Listener {
             enchantedBook.itemMeta = meta
             event.result = enchantedBook
 
-            inventory.repairCost = disenchantmentCost(enchantment)
+            view.repairCost = disenchantmentCost(enchantment)
         }
     }
 
     @EventHandler
     fun extractEnchantment(event: InventoryClickEvent) {
         val inventory = event.clickedInventory
+        val view = event.view
         val whoClicked = event.whoClicked
 
         // Check whether left-clicking the result of the result prepared above
         if (event.isLeftClick &&
             whoClicked is Player &&
             inventory is AnvilInventory &&
+            view is AnvilView &&
             event.slotType == InventoryType.SlotType.RESULT
         ) {
             // Checking if there are all the required items and there is still an applicable enchantment
@@ -80,7 +84,7 @@ class DisenchantmentListener(private val plugin: Plugin) : Listener {
                 firstItem.enchantments.isNotEmpty() &&
                 book != null &&
                 book.type == Material.WRITABLE_BOOK &&
-                inventory.renameText?.isEmpty() == true
+                view.renameText?.isEmpty() == true
             ) {
 
 
